@@ -23,6 +23,7 @@
 #include "config.h"     // настройки сервера
 #include "logger.h"     // логирование
 #include "thread_pool.h" // пул потоков
+#include "db.h"         // работа с базой данных
 
 // Глобальная переменная для корректного завершения по Ctrl+C
 static thread_pool_t *global_pool = NULL;
@@ -93,6 +94,14 @@ int main() {
     // === Шаг 5: Запускаем пул потоков ===
     thread_pool_init(&pool);
     global_pool = &pool;
+
+    // === Подключаемся к базе данных ===
+    PGconn *db_conn = db_connect();
+    if (db_conn) {
+        db_log_server_event(db_conn, "server_start",
+                            "Server started on port 8080");
+        // Не закрываем соединение — оно понадобится для обработки клиентов
+    }
 
     printf("Server started on port %d\n", SERVER_PORT);
     log_event("Server started on port %d", SERVER_PORT);
