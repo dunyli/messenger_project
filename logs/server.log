@@ -1,2 +1,21 @@
 [2026-05-15 23:35:05] Server started on port 8080
 [2026-05-15 23:35:17] New client connected (fd=4)
+[2026-05-16 18:58:40] Thread pool initialized with 10 threads
+[2026-05-16 18:58:40] Server started on port 8080
+[2026-05-16 18:58:47] Server shutdown initiated (SIGINT)
+[2026-05-16 18:58:47] Thread pool shut down
+[2026-05-16 18:58:47] Server stopped
+[2026-05-16 18:58:58] Thread pool initialized with 10 threads
+[2026-05-16 18:58:58] Server started on port 8080
+[2026-05-16 18:59:20] New client connected (fd=4)
+[2026-05-16 18:59:20] Thread processing client fd=4
+[2026-05-16 18:59:36] New client connected (fd=5)
+[2026-05-16 18:59:36] Thread processing client fd=5
+[2026-05-16 18:59:43] New client connected (fd=6)
+[2026-05-16 18:59:43] Thread processing client fd=6
+[2026-05-16 19:00:06] Received from fd=6: hello
+[2026-05-16 19:00:07] Client fd=6 disconnected
+[2026-05-16 19:00:22] Received from fd=4: pizda
+[2026-05-16 19:00:22] Client fd=4 disconnected
+[2026-05-16 19:00:29] Received from fd=5: hi men
+[2026-05-16 19:00:29] Client fd=5 disconnected
