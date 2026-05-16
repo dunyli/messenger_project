@@ -1,31 +1,28 @@
 # Makefile для сборки серверной части мессенджера
+#
+# Цели:
 #   make        — собрать исполняемый файл server
 #   make clean  — удалить скомпилированные файлы
-# Зависимости: libpq (PostgreSQL), pthread (многопоточность)
 
-CC      = gcc                            # компилятор
-CFLAGS  = -Wall -Wextra -pthread         # флаги: предупреждения + потоки
-LDFLAGS = -lpq -lpthread                 # подключаемые библиотеки
+CC      = gcc
+CFLAGS  = -Wall -Wextra -pthread
+LDFLAGS = -lpq -lpthread
 
-TARGET  = server                         # имя выходного исполняемого файла
+TARGET  = server
 
-# Список исходных файлов
-SRC     = src/main.c src/logger.c
+# Все исходные файлы сервера
+SRC     = src/main.c src/logger.c src/thread_pool.c src/client_handler.c
 
-# Автоматически заменяем .c на .o для объектных файлов
+# Автоматически заменяем .c на .o
 OBJ     = $(SRC:.c=.o)
 
-# Цель по умолчанию — сборка сервера
 all: $(TARGET)
 
-# Линковка исполняемого файла из объектных файлов
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) $(LDFLAGS)
 
-# Правило компиляции каждого .c в .o
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Очистка: удаляем исполняемый файл и все объектные файлы
 clean:
 	rm -f $(TARGET) src/*.o
