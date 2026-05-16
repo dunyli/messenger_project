@@ -1,75 +1,115 @@
 /*
  * main.c — точка входа серверной части мессенджера
- * Создаёт TCP-сокет, слушает порт, принимает входящие подключения
- * На данном этапе — каркас: клиент принимается и сразу закрывается
- * Обработка клиентов и интеграция с БД будут добавлены позже
+ *
+ * На данном этапе:
+ *   - Создаёт TCP-сокет на порту 8080
+ *   - Запускает пул из 10 рабочих потоков
+ *   - Принимает входящие подключения и передаёт их в пул
+ *   - Потоки обрабатывают клиентов параллельно
+ *
+ * Дальше будет добавлено:
+ *   - Протокол обмена сообщениями
+ *   - Интеграция с PostgreSQL
+ *   - OpenSSL-шифрование
  */
 
-#include <stdio.h>      // printf
-#include <stdlib.h>     // exit
+#include <stdio.h>      // printf, perror
+#include <stdlib.h>     // exit, EXIT_FAILURE
 #include <string.h>     // memset
 #include <unistd.h>     // close
-#include <pthread.h>    // pthread (пока зарезервировано)
-#include <sys/socket.h> // socket, bind, listen, accept
-#include <netinet/in.h> // sockaddr_in, INADDR_ANY
-#include <arpa/inet.h>  // inet_ntoa
+#include <signal.h>     // signal, SIGINT (для корректного завершения)
+#include <sys/socket.h> // socket, bind, listen, accept, setsockopt
+#include <netinet/in.h> // sockaddr_in, INADDR_ANY, htons
 #include "config.h"     // настройки сервера
 #include "logger.h"     // логирование
+#include "thread_pool.h" // пул потоков
+
+// Глобальная переменная для корректного завершения по Ctrl+C
+static thread_pool_t *global_pool = NULL;
+static int server_fd_global = 0;
+
+/*
+ * signal_handler — обрабатывает Ctrl+C (SIGINT)
+ * Корректно завершает пул потоков и закрывает сокет
+ */
+void signal_handler(int sig) {
+    (void)sig;
+    printf("\nShutting down server...\n");
+    log_event("Server shutdown initiated (SIGINT)");
+
+    if (global_pool) {
+        thread_pool_shutdown(global_pool);
+    }
+    if (server_fd_global > 0) {
+        close(server_fd_global);
+    }
+
+    log_event("Server stopped");
+    printf("Server stopped.\n");
+    exit(0);
+}
 
 int main() {
-    int server_fd;                  // файловый дескриптор серверного сокета
-    struct sockaddr_in address;     // структура для адреса сервера
-    int opt = 1;                    // флаг для setsockopt (разрешить переиспользование порта)
+    int server_fd;
+    struct sockaddr_in address;
+    int opt = 1;
+    thread_pool_t pool;
 
-    // 1. Создаём TCP-сокет (IPv4, потоковый)
+    // Регистрируем обработчик Ctrl+C
+    signal(SIGINT, signal_handler);
+
+    // === Шаг 1: Создаём TCP-сокет ===
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Разрешаем переиспользовать порт после остановки сервера
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-    // 2. Заполняем адрес сервера
+    // === Шаг 2: Настраиваем адрес сервера ===
     memset(&address, 0, sizeof(address));
-    address.sin_family = AF_INET;           // IPv4
-    address.sin_addr.s_addr = INADDR_ANY;   // слушаем на всех интерфейсах
-    address.sin_port = htons(SERVER_PORT);  // порт в сетевом порядке байт
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(SERVER_PORT);
 
-    // 3. Привязываем сокет к адресу
+    // === Шаг 3: Привязываем сокет ===
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         close(server_fd);
         exit(EXIT_FAILURE);
     }
 
-    // 4. Переводим сокет в режим прослушивания
+    // === Шаг 4: Слушаем порт ===
     if (listen(server_fd, MAX_CLIENTS) < 0) {
         perror("listen failed");
         close(server_fd);
         exit(EXIT_FAILURE);
     }
 
+    // Сохраняем для signal_handler
+    server_fd_global = server_fd;
+
+    // === Шаг 5: Запускаем пул потоков ===
+    thread_pool_init(&pool);
+    global_pool = &pool;
+
     printf("Server started on port %d\n", SERVER_PORT);
     log_event("Server started on port %d", SERVER_PORT);
 
-    // 5. Главный цикл — бесконечно принимаем подключения
+    // === Шаг 6: Главный цикл — принимаем подключения ===
     while (1) {
-        // Принимаем входящее подключение
         int client_fd = accept(server_fd, NULL, NULL);
         if (client_fd >= 0) {
-            printf("New client connected\n");
+            printf("New client connected (fd=%d)\n", client_fd);
             log_event("New client connected (fd=%d)", client_fd);
 
-            // TODO: здесь будет создание потока или передача в пул для обработки клиента
-            // Пока просто закрываем соединение
-            close(client_fd);
+            // Передаём клиента в пул потоков (вместо мгновенного close)
+            thread_pool_add_task(&pool, client_fd);
         }
     }
 
-    // 6. Завершение работы (до этой строки код не дойдёт — сервер работает бесконечно)
+    // Сюда код не дойдёт — сервер работает бесконечно
     close(server_fd);
-    log_event("Server stopped");
     return 0;
 }
