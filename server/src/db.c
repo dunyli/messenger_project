@@ -40,31 +40,38 @@ PGconn *db_connect(void) {
  * Проверяет, не занят ли логин, затем вставляет запись
  */
 int db_register_user(PGconn *conn, const char *login, const char *password_hash) {
+    char *escaped_login = PQescapeLiteral(conn, login, strlen(login));
+
     // Проверяем, существует ли уже такой логин
     char query[512];
     snprintf(query, sizeof(query),
-             "SELECT id FROM users WHERE login = '%s'", login);
+             "SELECT id FROM users WHERE login = %s", escaped_login);
 
     PGresult *res = PQexec(conn, query);
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
         log_event("DB error (register check): %s", PQerrorMessage(conn));
+        PQfreemem(escaped_login);
         PQclear(res);
         return -1;
     }
 
     if (PQntuples(res) > 0) {
-        // Пользователь уже существует
         PQclear(res);
+        PQfreemem(escaped_login);
         return 0;
     }
     PQclear(res);
 
     // Добавляем нового пользователя
+    char *escaped_hash = PQescapeLiteral(conn, password_hash, strlen(password_hash));
     snprintf(query, sizeof(query),
-             "INSERT INTO users (login, password_hash) VALUES ('%s', '%s')",
-             login, password_hash);
+             "INSERT INTO users (login, password_hash) VALUES (%s, %s)",
+             escaped_login, escaped_hash);
 
     res = PQexec(conn, query);
+    PQfreemem(escaped_login);
+    PQfreemem(escaped_hash);
+
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
         log_event("DB error (register insert): %s", PQerrorMessage(conn));
         PQclear(res);
@@ -81,10 +88,16 @@ int db_register_user(PGconn *conn, const char *login, const char *password_hash)
  * Возвращает user_id при совпадении, -1 при неверных данных
  */
 int db_authenticate_user(PGconn *conn, const char *login, const char *password_hash) {
+    char *escaped_login = PQescapeLiteral(conn, login, strlen(login));
+    char *escaped_hash = PQescapeLiteral(conn, password_hash, strlen(password_hash));
+
     char query[512];
     snprintf(query, sizeof(query),
-             "SELECT id FROM users WHERE login = '%s' AND password_hash = '%s'",
-             login, password_hash);
+             "SELECT id FROM users WHERE login = %s AND password_hash = %s",
+             escaped_login, escaped_hash);
+
+    PQfreemem(escaped_login);
+    PQfreemem(escaped_hash);
 
     PGresult *res = PQexec(conn, query);
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -94,7 +107,6 @@ int db_authenticate_user(PGconn *conn, const char *login, const char *password_h
     }
 
     if (PQntuples(res) == 0) {
-        // Неверный логин или пароль
         PQclear(res);
         return -1;
     }
@@ -108,14 +120,20 @@ int db_authenticate_user(PGconn *conn, const char *login, const char *password_h
 
 /*
  * db_save_message — сохраняет сообщение в БД
+ * Использует PQescapeLiteral для безопасной обработки спецсимволов и кириллицы
  * Возвращает message_id или -1 при ошибке
  */
 int db_save_message(PGconn *conn, int sender_id, int chat_id, const char *content) {
-    char query[BUFFER_SIZE + 256];
+    // Экранируем текст сообщения для безопасной вставки в SQL
+    char *escaped_content = PQescapeLiteral(conn, content, strlen(content));
+
+    char query[BUFFER_SIZE + 512];
     snprintf(query, sizeof(query),
              "INSERT INTO messages (sender_id, chat_id, content) "
-             "VALUES (%d, %d, '%s') RETURNING id",
-             sender_id, chat_id, content);
+             "VALUES (%d, %d, %s) RETURNING id",
+             sender_id, chat_id, escaped_content);
+
+    PQfreemem(escaped_content);  // освобождаем память после использования
 
     PGresult *res = PQexec(conn, query);
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {

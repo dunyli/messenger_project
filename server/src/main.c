@@ -107,7 +107,6 @@ int main() {
     if (db_conn) {
         db_log_server_event(db_conn, "server_start",
                             "Server started on port 8080");
-        printf("Connected to database %s\n", DB_NAME);
     } else {
         printf("WARNING: Running without database connection\n");
         log_event("WARNING: Server started without database connection");

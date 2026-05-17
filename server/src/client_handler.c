@@ -109,8 +109,8 @@ static void handle_login(int client_fd, parsed_message_t *msg) {
 
 /*
  * handle_msg — обработка команды MSG
- * Сохраняет сообщение в БД и возвращает подтверждение
- * (маршрутизация адресату будет добавлена позже)
+ * Находит или создаёт личный чат между отправителем и получателем,
+ * затем сохраняет сообщение
  */
 static void handle_msg(int client_fd, parsed_message_t *msg) {
     if (current_user_id < 0) {
@@ -126,18 +126,72 @@ static void handle_msg(int client_fd, parsed_message_t *msg) {
     char *recipient_login = msg->args[0];
     char *text = msg->args[1];
 
-    // Проверяем, существует ли получатель (упрощённо — ищем по логину)
-    // TODO: создать чат между пользователями, если его ещё нет
-    // Пока сохраняем с chat_id = 0 (заглушка)
+    // 1. Находим ID получателя
+    char query[512];
+    char *escaped_login = PQescapeLiteral(db_conn, recipient_login, strlen(recipient_login));
+    snprintf(query, sizeof(query), "SELECT id FROM users WHERE login = %s", escaped_login);
+    PQfreemem(escaped_login);
 
-    int message_id = db_save_message(db_conn, current_user_id, 1, text);
+    PGresult *res = PQexec(db_conn, query);
+    if (PQresultStatus(res) != PGRES_TUPLES_OK || PQntuples(res) == 0) {
+        if (PQresultStatus(res) == PGRES_TUPLES_OK) PQclear(res);
+        send_response(client_fd, "ERROR", "Recipient not found");
+        return;
+    }
+    int recipient_id = atoi(PQgetvalue(res, 0, 0));
+    PQclear(res);
+
+    // 2. Ищем существующий личный чат между этими двумя пользователями
+    snprintf(query, sizeof(query),
+             "SELECT c.id FROM chats c "
+             "JOIN chat_members cm1 ON c.id = cm1.chat_id AND cm1.user_id = %d "
+             "JOIN chat_members cm2 ON c.id = cm2.chat_id AND cm2.user_id = %d "
+             "WHERE c.type = 'private'",
+             current_user_id, recipient_id);
+
+    res = PQexec(db_conn, query);
+    int chat_id = -1;
+
+    if (PQresultStatus(res) == PGRES_TUPLES_OK && PQntuples(res) > 0) {
+        // Чат уже существует
+        chat_id = atoi(PQgetvalue(res, 0, 0));
+    }
+    PQclear(res);
+
+    // 3. Если чата нет — создаём
+    if (chat_id < 0) {
+        snprintf(query, sizeof(query),
+                 "INSERT INTO chats (name, type) VALUES ('private', 'private') RETURNING id");
+        res = PQexec(db_conn, query);
+        if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+            PQclear(res);
+            send_response(client_fd, "ERROR", "Failed to create chat");
+            return;
+        }
+        chat_id = atoi(PQgetvalue(res, 0, 0));
+        PQclear(res);
+
+        // Добавляем обоих участников
+        snprintf(query, sizeof(query),
+                 "INSERT INTO chat_members (chat_id, user_id) VALUES (%d, %d), (%d, %d)",
+                 chat_id, current_user_id, chat_id, recipient_id);
+        res = PQexec(db_conn, query);
+        PQclear(res);
+
+        log_event("Created private chat id=%d for users %d and %d",
+                  chat_id, current_user_id, recipient_id);
+    }
+
+    // 4. Сохраняем сообщение
+    int message_id = db_save_message(db_conn, current_user_id, chat_id, text);
 
     if (message_id >= 0) {
         log_event("Message from %s to %s: %s", current_user_login, recipient_login, text);
 
         char response_body[256];
         snprintf(response_body, sizeof(response_body),
-                 "Message sent to %s (msg_id=%d)", recipient_login, message_id);
+                 "Message sent to %s (msg_id=%d, chat_id=%d)",
+                 recipient_login, message_id, chat_id);
         send_response(client_fd, "OK", response_body);
     } else {
         send_response(client_fd, "ERROR", "Failed to save message");

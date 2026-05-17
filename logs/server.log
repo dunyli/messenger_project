@@ -41,3 +41,86 @@ connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  passw
 [2026-05-16 19:58:08] Server shutdown initiated (SIGINT)
 [2026-05-16 19:58:08] Thread pool shut down
 [2026-05-16 19:58:08] Server stopped
+[2026-05-17 11:23:17] Thread pool initialized with 10 threads
+[2026-05-17 11:23:17] Connected to database messenger_db
+[2026-05-17 11:23:17] Server started on port 8080
+[2026-05-17 11:29:50] Server shutdown initiated (SIGINT)
+[2026-05-17 11:29:50] Thread pool shut down
+[2026-05-17 11:29:50] Disconnected from database
+[2026-05-17 11:29:50] Server stopped
+[2026-05-17 11:30:02] Thread pool initialized with 10 threads
+[2026-05-17 11:30:02] Connected to database messenger_db
+[2026-05-17 11:30:02] Server started on port 8080
+[2026-05-17 11:30:09] Server shutdown initiated (SIGINT)
+[2026-05-17 11:30:09] Thread pool shut down
+[2026-05-17 11:30:09] Disconnected from database
+[2026-05-17 11:30:09] Server stopped
+[2026-05-17 11:30:20] Thread pool initialized with 10 threads
+[2026-05-17 11:30:20] Connected to database messenger_db
+[2026-05-17 11:30:20] Server started on port 8080
+[2026-05-17 11:35:43] New client connected (fd=5)
+[2026-05-17 11:35:43] Thread processing client fd=5
+[2026-05-17 11:35:55] Received from fd=5: REGISTER|alice|mypassword
+[2026-05-17 11:35:55] User registered: alice
+[2026-05-17 11:35:55] User registered: alice
+[2026-05-17 11:36:03] Received from fd=5: REGISTER|bob|secret
+[2026-05-17 11:36:03] User registered: bob
+[2026-05-17 11:36:03] User registered: bob
+[2026-05-17 11:36:11] Received from fd=5: LOGIN|alice|mypassword
+[2026-05-17 11:36:11] User authenticated: alice (id=1)
+[2026-05-17 11:36:11] User logged in: alice (id=1)
+[2026-05-17 11:36:19] Received from fd=5: MSG|bob|Привет, Боб!
+[2026-05-17 11:36:19] DB error (save message): ERROR:  insert or update on table "messages" violates foreign key constraint "messages_chat_id_fkey"
+DETAIL:  Key (chat_id)=(1) is not present in table "chats".
+
+[2026-05-17 11:36:29] Received from fd=5: HISTORY|bob|5
+[2026-05-17 11:36:37] Received from fd=5: LOGOUT
+[2026-05-17 11:36:37] User logged out: alice (id=1)
+[2026-05-17 11:45:46] Received from fd=5: ����
+[2026-05-17 11:45:49] Received from fd=5: ����
+[2026-05-17 11:45:51] Received from fd=5: 
+[2026-05-17 11:45:51] Received from fd=5: 
+[2026-05-17 11:47:16] Thread pool initialized with 10 threads
+[2026-05-17 11:47:16] Connected to database messenger_db
+[2026-05-17 11:47:16] Server started on port 8080
+[2026-05-17 11:47:35] New client connected (fd=5)
+[2026-05-17 11:47:35] Thread processing client fd=5
+[2026-05-17 11:47:44] Received from fd=5: REGISTER|alice|mypassword
+[2026-05-17 11:47:55] Received from fd=5: LOGIN|alice|mypassword
+[2026-05-17 11:47:55] User authenticated: alice (id=1)
+[2026-05-17 11:47:55] User logged in: alice (id=1)
+[2026-05-17 11:48:02] Received from fd=5: MSG|bob|Привет, Боб!
+[2026-05-17 11:48:02] DB error (save message): ERROR:  insert or update on table "messages" violates foreign key constraint "messages_chat_id_fkey"
+DETAIL:  Key (chat_id)=(1) is not present in table "chats".
+
+[2026-05-17 11:48:16] Received from fd=5: HISTORY|bob|5
+[2026-05-17 11:48:24] Received from fd=5: LOGOUT
+[2026-05-17 11:48:24] User logged out: alice (id=1)
+[2026-05-17 11:51:18] Received from fd=5: ����
+[2026-05-17 11:51:28] Client fd=5 disconnected
+[2026-05-17 11:51:28] Client fd=5 disconnected
+[2026-05-17 11:51:29] Server shutdown initiated (SIGINT)
+[2026-05-17 11:51:29] Thread pool shut down
+[2026-05-17 11:51:29] Disconnected from database
+[2026-05-17 11:51:29] Server stopped
+[2026-05-17 11:52:00] Thread pool initialized with 10 threads
+[2026-05-17 11:52:00] Connected to database messenger_db
+[2026-05-17 11:52:00] Server started on port 8080
+[2026-05-17 11:53:48] New client connected (fd=5)
+[2026-05-17 11:53:48] Thread processing client fd=5
+[2026-05-17 11:54:00] Received from fd=5: LOGIN|alice|mypassword
+[2026-05-17 11:54:00] User authenticated: alice (id=1)
+[2026-05-17 11:54:00] User logged in: alice (id=1)
+[2026-05-17 11:54:08] Received from fd=5: MSG|bob|Привет, Боб!
+[2026-05-17 11:54:08] Created private chat id=1 for users 1 and 2
+[2026-05-17 11:54:08] Message saved: id=3, sender=1, chat=1
+[2026-05-17 11:54:08] Message from alice to bob: Привет, Боб!
+[2026-05-17 11:54:43] Received from fd=5: HISTORY|bob|5
+[2026-05-17 11:54:50] Received from fd=5: LOGOUT
+[2026-05-17 11:54:50] User logged out: alice (id=1)
+[2026-05-17 11:55:12] Client fd=5 disconnected
+[2026-05-17 11:55:12] Client fd=5 disconnected
+[2026-05-17 11:55:15] Server shutdown initiated (SIGINT)
+[2026-05-17 11:55:15] Thread pool shut down
+[2026-05-17 11:55:15] Disconnected from database
+[2026-05-17 11:55:15] Server stopped
