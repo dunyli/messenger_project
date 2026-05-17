@@ -23,6 +23,10 @@
 #include "protocol.h"
 #include "db.h"
 #include "crypto.h"
+#include "online_users.h"
+
+// Внешняя таблица онлайн-пользователей (из main.c)
+extern online_users_t online_table;
 
 // Внешнее соединение с БД (создаётся в main.c)
 extern PGconn *db_conn;
@@ -97,6 +101,9 @@ static void handle_login(int client_fd, parsed_message_t *msg) {
         // Логируем вход
         db_log_session(db_conn, user_id, "login", "127.0.0.1");
 
+        // Добавляем пользователя в таблицу онлайн
+        online_users_add(&online_table, user_id, login, client_fd);
+
         log_event("User logged in: %s (id=%d)", login, user_id);
 
         char response_body[256];
@@ -107,10 +114,11 @@ static void handle_login(int client_fd, parsed_message_t *msg) {
     }
 }
 
+
 /*
  * handle_msg — обработка команды MSG
- * Находит или создаёт личный чат между отправителем и получателем,
- * затем сохраняет сообщение
+ * Находит/создаёт чат, сохраняет сообщение в БД,
+ * и пересылает получателю, если он онлайн
  */
 static void handle_msg(int client_fd, parsed_message_t *msg) {
     if (current_user_id < 0) {
@@ -141,7 +149,7 @@ static void handle_msg(int client_fd, parsed_message_t *msg) {
     int recipient_id = atoi(PQgetvalue(res, 0, 0));
     PQclear(res);
 
-    // 2. Ищем существующий личный чат между этими двумя пользователями
+    // 2. Ищем или создаём личный чат
     snprintf(query, sizeof(query),
              "SELECT c.id FROM chats c "
              "JOIN chat_members cm1 ON c.id = cm1.chat_id AND cm1.user_id = %d "
@@ -153,12 +161,10 @@ static void handle_msg(int client_fd, parsed_message_t *msg) {
     int chat_id = -1;
 
     if (PQresultStatus(res) == PGRES_TUPLES_OK && PQntuples(res) > 0) {
-        // Чат уже существует
         chat_id = atoi(PQgetvalue(res, 0, 0));
     }
     PQclear(res);
 
-    // 3. Если чата нет — создаём
     if (chat_id < 0) {
         snprintf(query, sizeof(query),
                  "INSERT INTO chats (name, type) VALUES ('private', 'private') RETURNING id");
@@ -171,7 +177,6 @@ static void handle_msg(int client_fd, parsed_message_t *msg) {
         chat_id = atoi(PQgetvalue(res, 0, 0));
         PQclear(res);
 
-        // Добавляем обоих участников
         snprintf(query, sizeof(query),
                  "INSERT INTO chat_members (chat_id, user_id) VALUES (%d, %d), (%d, %d)",
                  chat_id, current_user_id, chat_id, recipient_id);
@@ -182,19 +187,32 @@ static void handle_msg(int client_fd, parsed_message_t *msg) {
                   chat_id, current_user_id, recipient_id);
     }
 
-    // 4. Сохраняем сообщение
+    // 3. Сохраняем сообщение в БД
     int message_id = db_save_message(db_conn, current_user_id, chat_id, text);
 
-    if (message_id >= 0) {
-        log_event("Message from %s to %s: %s", current_user_login, recipient_login, text);
-
-        char response_body[256];
-        snprintf(response_body, sizeof(response_body),
-                 "Message sent to %s (msg_id=%d, chat_id=%d)",
-                 recipient_login, message_id, chat_id);
-        send_response(client_fd, "OK", response_body);
-    } else {
+    if (message_id < 0) {
         send_response(client_fd, "ERROR", "Failed to save message");
+        return;
+    }
+
+    log_event("Message from %s to %s: %s", current_user_login, recipient_login, text);
+
+    // 4. Отправляем подтверждение отправителю
+    char response_body[256];
+    snprintf(response_body, sizeof(response_body),
+             "Message sent to %s (msg_id=%d)", recipient_login, message_id);
+    send_response(client_fd, "OK", response_body);
+
+    // 5. Пересылаем сообщение получателю (если онлайн)
+    int recipient_fd = online_users_find_by_login(&online_table, recipient_login);
+    if (recipient_fd > 0) {
+        char forward[BUFFER_SIZE];
+        snprintf(forward, sizeof(forward),
+                 "OK|New message from %s: %s\n", current_user_login, text);
+        send(recipient_fd, forward, strlen(forward), 0);
+        log_event("Message forwarded to %s (fd=%d)", recipient_login, recipient_fd);
+    } else {
+        log_event("Recipient %s is offline, message saved for later", recipient_login);
     }
 }
 
@@ -295,4 +313,6 @@ void handle_client(int client_fd) {
 
     // Клиент отключился
     log_event("Client fd=%d disconnected", client_fd);
+    / Удаляем пользователя из таблицы онлайн
+    online_users_remove(&online_table, client_fd);
 }

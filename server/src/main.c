@@ -24,6 +24,7 @@
 #include "logger.h"     // логирование
 #include "thread_pool.h" // пул потоков
 #include "db.h"         // работа с базой данных
+#include "online_users.h"  // таблица онлайн-пользователей
 
 // Глобальная переменная для корректного завершения по Ctrl+C
 static thread_pool_t *global_pool = NULL;
@@ -31,6 +32,8 @@ static int server_fd_global = 0;
 
 // Глобальное соединение с БД (используется в client_handler.c)
 PGconn *db_conn = NULL;
+// Глобальная таблица онлайн-пользователей
+online_users_t online_table;
 
 /*
  * signal_handler — обрабатывает Ctrl+C (SIGINT)
@@ -65,6 +68,9 @@ int main() {
 
     // Регистрируем обработчик Ctrl+C
     signal(SIGINT, signal_handler);
+
+    // Инициализируем таблицу онлайн-пользователей
+    online_users_init(&online_table);
 
     // === Шаг 1: Создаём TCP-сокет ===
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
