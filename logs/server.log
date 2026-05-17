@@ -124,3 +124,36 @@ DETAIL:  Key (chat_id)=(1) is not present in table "chats".
 [2026-05-17 11:55:15] Thread pool shut down
 [2026-05-17 11:55:15] Disconnected from database
 [2026-05-17 11:55:15] Server stopped
+[2026-05-17 12:16:09] Thread pool initialized with 10 threads
+[2026-05-17 12:16:09] Connected to database messenger_db
+[2026-05-17 12:16:09] Server started on port 8080
+[2026-05-17 12:16:21] New client connected (fd=5)
+[2026-05-17 12:16:21] Thread processing client fd=5
+[2026-05-17 12:17:00] Received from fd=5: LOGIN|alice mypassword
+[2026-05-17 12:17:34] Received from fd=5: LOGIN|alice|password
+[2026-05-17 12:18:58] Client fd=5 disconnected
+[2026-05-17 12:18:58] Client fd=5 disconnected
+[2026-05-17 12:20:29] New client connected (fd=6)
+[2026-05-17 12:20:29] Thread processing client fd=6
+[2026-05-17 12:20:43] Received from fd=6: LOGIN|alice|mypassword
+[2026-05-17 12:20:43] User authenticated: alice (id=1)
+[2026-05-17 12:20:43] User logged in: alice (id=1)
+[2026-05-17 12:20:53] Received from fd=6: MSG|bob|Привет,|как|дела?
+[2026-05-17 12:20:53] Message saved: id=4, sender=1, chat=1
+[2026-05-17 12:20:53] Message from alice to bob: Привет,
+[2026-05-17 12:22:12] New client connected (fd=5)
+[2026-05-17 12:22:12] Thread processing client fd=5
+[2026-05-17 12:22:27] Received from fd=5: LOGIN|bob|secret
+[2026-05-17 12:22:27] User authenticated: bob (id=2)
+[2026-05-17 12:22:27] User logged in: bob (id=2)
+[2026-05-17 12:22:34] Received from fd=5: MSG|alice|Привет,|Алиса!|Отлично,|а|ты?
+[2026-05-17 12:22:34] Message saved: id=5, sender=2, chat=1
+[2026-05-17 12:22:34] Message from bob to alice: Привет,
+[2026-05-17 12:23:36] Server shutdown initiated (SIGINT)
+[2026-05-17 12:23:39] Client fd=6 disconnected
+[2026-05-17 12:23:39] Client fd=6 disconnected
+[2026-05-17 12:23:46] Client fd=5 disconnected
+[2026-05-17 12:23:46] Client fd=5 disconnected
+[2026-05-17 12:23:46] Thread pool shut down
+[2026-05-17 12:23:46] Disconnected from database
+[2026-05-17 12:23:46] Server stopped
