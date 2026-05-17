@@ -3,40 +3,32 @@
  */
 let ws = null;
 let messageCallback = null;
-let isConnecting = false;
 
 const SERVER_IP = '192.168.1.98';
 
 export function connect(onMessage) {
+    // Если уже подключены — закрываем старый и создаём новый
+    if (ws) {
+        ws.onmessage = null;
+        ws.onclose = null;
+        ws.onerror = null;
+        ws.close();
+        ws = null;
+    }
+
     messageCallback = onMessage;
-
-    // Если уже подключены — не пересоздаём
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log('Already connected');
-        return;
-    }
-
-    // Если в процессе подключения — ждём
-    if (isConnecting) {
-        console.log('Connection in progress...');
-        return;
-    }
-
-    isConnecting = true;
     const url = `ws://${SERVER_IP}:8080`;
 
     try {
         ws = new WebSocket(url);
     } catch (error) {
         console.error('Failed to create WebSocket:', error);
-        isConnecting = false;
         if (messageCallback) messageCallback('ERROR|Failed to connect');
         return;
     }
 
     ws.onopen = () => {
         console.log('Connected to', url);
-        isConnecting = false;
     };
 
     ws.onmessage = (event) => {
@@ -51,9 +43,8 @@ export function connect(onMessage) {
         ws = null;
     };
 
-    ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        isConnecting = false;
+    ws.onerror = () => {
+        console.error('WebSocket error');
         if (messageCallback) messageCallback('ERROR|Connection error');
     };
 }
@@ -64,7 +55,7 @@ export function send(command, ...args) {
         console.log('Sending:', message);
         ws.send(message);
     } else {
-        console.error('WebSocket is not connected');
+        console.error('WebSocket not ready');
     }
 }
 
@@ -73,12 +64,4 @@ export function disconnect() {
         ws.close();
         ws = null;
     }
-}
-
-export function isConnected() {
-    return ws && ws.readyState === WebSocket.OPEN;
-}
-
-export function getWs() {
-    return ws;
 }

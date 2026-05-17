@@ -122,31 +122,30 @@ int ws_handshake(int client_fd) {
 
 /*
  * ws_send — отправляет текстовый кадр клиенту
- *
- * Формат кадра от сервера (БЕЗ маски, MASK=0):
- *   Байт 0: 0x81 (FIN=1, OPCODE=0x1)
- *   Байт 1: длина (если < 126) или 126 + 2 байта длины, или 127 + 8 байт
- *   Байты заголовка...
- *   Payload (данные)
+ * Формат кадра от сервера (БЕЗ маски):
+ *   Байт 0: 0x81 (FIN=1, RSV1=0, RSV2=0, RSV3=0, OPCODE=0x1)
+ *   Байт 1: длина payload (без маски, mask bit = 0)
+ *   Байты 2-...: расширенная длина (если payload > 125)
+ *   Далее: payload
  */
 int ws_send(int client_fd, const char *data, size_t len) {
-    unsigned char frame[10];  // заголовок кадра (до 10 байт)
+    unsigned char frame[10];
     size_t header_size;
 
-    // Байт 0: FIN=1, RSV=0, OPCODE=0x1 (текст)
+    // Байт 0: FIN=1, RSV=0, OPCODE=0x1 (текстовый кадр)
     frame[0] = 0x81;
 
-    // Байт 1 и далее: длина payload
+    // Байт 1 и далее: длина (без маски, MASK=0)
     if (len <= 125) {
         frame[1] = (unsigned char)len;
         header_size = 2;
     } else if (len <= 65535) {
-        frame[1] = 126;
-        frame[2] = (unsigned char)((len >> 8) & 0xFF);
-        frame[3] = (unsigned char)(len & 0xFF);
+        frame[1] = 126;                     // признак: длина в следующих 2 байтах
+        frame[2] = (unsigned char)((len >> 8) & 0xFF);   // старший байт
+        frame[3] = (unsigned char)(len & 0xFF);          // младший байт
         header_size = 4;
     } else {
-        frame[1] = 127;
+        frame[1] = 127;                     // признак: длина в следующих 8 байтах
         for (int i = 0; i < 8; i++) {
             frame[2 + i] = (unsigned char)((len >> (56 - i * 8)) & 0xFF);
         }
@@ -154,10 +153,20 @@ int ws_send(int client_fd, const char *data, size_t len) {
     }
 
     // Отправляем заголовок
-    send(client_fd, frame, header_size, 0);
+    ssize_t sent = send(client_fd, frame, header_size, 0);
+    if (sent < 0) {
+        log_event("WebSocket send header failed");
+        return -1;
+    }
 
-    // Отправляем payload
-    send(client_fd, data, len, 0);
+    // Отправляем payload (только если есть что отправлять)
+    if (len > 0) {
+        sent = send(client_fd, data, len, 0);
+        if (sent < 0) {
+            log_event("WebSocket send payload failed");
+            return -1;
+        }
+    }
 
     return header_size + len;
 }

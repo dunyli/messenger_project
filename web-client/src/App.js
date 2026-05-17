@@ -1,33 +1,29 @@
-/*
- * App.js — главный компонент приложения
- * Переключает экраны: Login / Chat
- */
-import React, { useState, useCallback } from 'react';
-import { connect } from './api';
+import React, { useState } from 'react';
 import Login from './Login';
 import Chat from './Chat';
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
     const [login, setLogin] = useState('');
-    const [serverUrl, setServerUrl] = useState('');
+    const [password, setPassword] = useState('');
 
-    // Обработка входящих сообщений
-    const handleMessage = useCallback((data) => {
-        console.log('Incoming:', data);
-    }, []);
-
-    // Подключаемся при входе
-    const handleLogin = (userLogin) => {
+    const handleLogin = (userLogin, userPassword) => {
         setLogin(userLogin);
+        setPassword(userPassword);
         setLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        setLoggedIn(false);
+        setLogin('');
+        setPassword('');
     };
 
     if (!loggedIn) {
         return <Login onLogin={handleLogin} />;
     }
 
-    return <Chat login={login} />;
+    return <Chat login={login} password={password} onLogout={handleLogout} />;
 }
 
 export default App;

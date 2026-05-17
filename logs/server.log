@@ -350,3 +350,298 @@ DETAIL:  Key (chat_id)=(1) is not present in table "chats".
 [2026-05-17 17:53:07] WebSocket close frame received
 [2026-05-17 17:53:07] Client fd=5 disconnected
 [2026-05-17 17:53:07] Client fd=5 disconnected
+[2026-05-17 17:56:10] Server shutdown initiated (SIGINT)
+[2026-05-17 17:56:10] Thread pool shut down
+[2026-05-17 17:56:10] Disconnected from database
+[2026-05-17 17:56:10] Server stopped
+[2026-05-17 17:56:22] Online users table initialized
+[2026-05-17 17:56:22] Thread pool initialized with 10 threads
+[2026-05-17 17:56:22] Connected to database messenger_db
+[2026-05-17 17:56:22] Server started on port 8080
+[2026-05-17 17:56:37] New client connected (fd=5)
+[2026-05-17 17:56:37] Thread processing client fd=5
+[2026-05-17 17:56:37] WebSocket client detected on fd=5
+[2026-05-17 17:56:37] WebSocket handshake: key=PK42wTANguh3o0pCe/9xvg==
+[2026-05-17 17:56:37] WebSocket handshake successful, accept=YUqRK5h6+GlSWtWjUSEPvfezQ9k=
+[2026-05-17 17:56:37] Received from fd=5: LOGIN|чсапмир|вапр
+[2026-05-17 17:56:37] WebSocket close frame received
+[2026-05-17 17:56:37] Client fd=5 disconnected
+[2026-05-17 17:56:37] Client fd=5 disconnected
+[2026-05-17 18:03:18] Server shutdown initiated (SIGINT)
+[2026-05-17 18:03:18] Thread pool shut down
+[2026-05-17 18:03:18] Disconnected from database
+[2026-05-17 18:03:18] Server stopped
+[2026-05-17 18:03:31] Online users table initialized
+[2026-05-17 18:03:31] Thread pool initialized with 10 threads
+[2026-05-17 18:03:31] Connected to database messenger_db
+[2026-05-17 18:03:31] Server started on port 8080
+[2026-05-17 18:03:39] New client connected (fd=5)
+[2026-05-17 18:03:39] Thread processing client fd=5
+[2026-05-17 18:03:39] WebSocket client detected on fd=5
+[2026-05-17 18:03:39] WebSocket handshake: key=cObkhQbltk2OUAYyjpMskQ==
+[2026-05-17 18:03:39] WebSocket handshake successful, accept=+oSJf5sydOkpMKjBYK8lDk00yaI=
+[2026-05-17 18:03:39] Received from fd=5: LOGIN|ва|ыва
+[2026-05-17 18:03:47] WebSocket close frame received
+[2026-05-17 18:03:47] Client fd=5 disconnected
+[2026-05-17 18:03:47] Client fd=5 disconnected
+[2026-05-17 18:03:51] New client connected (fd=6)
+[2026-05-17 18:03:51] Thread processing client fd=6
+[2026-05-17 18:03:51] WebSocket client detected on fd=6
+[2026-05-17 18:03:51] WebSocket handshake: key=hfGqY9hd0PcyA6AsUSKfAA==
+[2026-05-17 18:03:51] WebSocket handshake successful, accept=HYGw6q8RaGVpVW7Wp3tkf1s+Duw=
+[2026-05-17 18:03:52] Received from fd=6: LOGIN|фыввымаи|фвымаимт
+[2026-05-17 18:07:23] WebSocket close frame received
+[2026-05-17 18:07:23] Client fd=6 disconnected
+[2026-05-17 18:07:23] Client fd=6 disconnected
+[2026-05-17 18:07:32] New client connected (fd=5)
+[2026-05-17 18:07:32] Thread processing client fd=5
+[2026-05-17 18:07:32] WebSocket client detected on fd=5
+[2026-05-17 18:07:32] WebSocket handshake: key=hhks1qeJCjGaH7l+9eptyw==
+[2026-05-17 18:07:32] WebSocket handshake successful, accept=ts2GffUNAP6USPK+/t0Cp84Kgxs=
+[2026-05-17 18:07:33] Received from fd=5: LOGIN|sdfdg|asdfs
+[2026-05-17 18:11:02] WebSocket close frame received
+[2026-05-17 18:11:02] Client fd=5 disconnected
+[2026-05-17 18:11:02] Client fd=5 disconnected
+[2026-05-17 18:11:05] New client connected (fd=6)
+[2026-05-17 18:11:05] Thread processing client fd=6
+[2026-05-17 18:11:05] WebSocket client detected on fd=6
+[2026-05-17 18:11:05] WebSocket handshake: key=fuNDdNLVn0F4r3cWol9trA==
+[2026-05-17 18:11:05] WebSocket handshake successful, accept=vnQq8lpCYvGYOwc9lELMDlqwCLw=
+[2026-05-17 18:11:05] Received from fd=6: LOGIN|adsf|sdf
+[2026-05-17 18:11:05] WebSocket close frame received
+[2026-05-17 18:11:05] Client fd=6 disconnected
+[2026-05-17 18:11:05] Client fd=6 disconnected
+[2026-05-17 18:12:24] New client connected (fd=7)
+[2026-05-17 18:12:24] Thread processing client fd=7
+[2026-05-17 18:12:24] WebSocket client detected on fd=7
+[2026-05-17 18:12:24] WebSocket handshake: key=+hbkDhRDtO+JVAiwtBcmAg==
+[2026-05-17 18:12:24] WebSocket handshake successful, accept=kM3e8h+XXcAYi/ek/57OmfNxz6g=
+[2026-05-17 18:12:24] Received from fd=7: LOGIN|фвыа|выап
+[2026-05-17 18:12:24] WebSocket close frame received
+[2026-05-17 18:12:24] Client fd=7 disconnected
+[2026-05-17 18:12:24] Client fd=7 disconnected
+[2026-05-17 18:13:27] New client connected (fd=5)
+[2026-05-17 18:13:27] Thread processing client fd=5
+[2026-05-17 18:13:27] WebSocket client detected on fd=5
+[2026-05-17 18:13:27] WebSocket handshake: key=UbGKiGRanxv5YRtzDvws8w==
+[2026-05-17 18:13:27] WebSocket handshake successful, accept=FearOPVgKt6IeGJVvfNRTERgjMI=
+[2026-05-17 18:13:27] Received from fd=5: LOGIN|dsf|dsfgf
+[2026-05-17 18:13:27] WebSocket close frame received
+[2026-05-17 18:13:27] Client fd=5 disconnected
+[2026-05-17 18:13:27] Client fd=5 disconnected
+[2026-05-17 18:13:51] New client connected (fd=6)
+[2026-05-17 18:13:51] Thread processing client fd=6
+[2026-05-17 18:13:51] WebSocket client detected on fd=6
+[2026-05-17 18:13:51] WebSocket handshake: key=XcSvaqp97KelS8FcekwPQA==
+[2026-05-17 18:13:51] WebSocket handshake successful, accept=TLTQw+eitpbH9n7bjybGz6QVWWQ=
+[2026-05-17 18:13:51] Received from fd=6: LOGIN|sdf|asdf
+[2026-05-17 18:13:51] WebSocket close frame received
+[2026-05-17 18:13:51] Client fd=6 disconnected
+[2026-05-17 18:13:51] Client fd=6 disconnected
+[2026-05-17 18:14:05] New client connected (fd=5)
+[2026-05-17 18:14:05] Thread processing client fd=5
+[2026-05-17 18:14:05] WebSocket client detected on fd=5
+[2026-05-17 18:14:05] WebSocket handshake: key=LRsSYqdo/N2VR57LyEejwg==
+[2026-05-17 18:14:05] WebSocket handshake successful, accept=bPrBalgZ6V+aVqXEy8T7EXrSOX0=
+[2026-05-17 18:14:05] Received from fd=5: LOGIN|sdfg|sdfg
+[2026-05-17 18:14:05] WebSocket close frame received
+[2026-05-17 18:14:05] Client fd=5 disconnected
+[2026-05-17 18:14:05] Client fd=5 disconnected
+[2026-05-17 18:15:26] New client connected (fd=6)
+[2026-05-17 18:15:26] Thread processing client fd=6
+[2026-05-17 18:15:26] WebSocket client detected on fd=6
+[2026-05-17 18:15:26] WebSocket handshake: key=N1GaFnR51XRzHOzxBZ+K3Q==
+[2026-05-17 18:15:26] WebSocket handshake successful, accept=7Rq5C/qmYXx01trixnqurJlR1VA=
+[2026-05-17 18:15:26] Received from fd=6: LOGIN|выап|выаа
+[2026-05-17 18:15:26] WebSocket close frame received
+[2026-05-17 18:15:26] Client fd=6 disconnected
+[2026-05-17 18:15:26] Client fd=6 disconnected
+[2026-05-17 18:17:32] Server shutdown initiated (SIGINT)
+[2026-05-17 18:17:32] Thread pool shut down
+[2026-05-17 18:17:32] Disconnected from database
+[2026-05-17 18:17:32] Server stopped
+[2026-05-17 18:17:49] Online users table initialized
+[2026-05-17 18:17:49] Thread pool initialized with 10 threads
+[2026-05-17 18:17:49] Connected to database messenger_db
+[2026-05-17 18:17:49] Server started on port 8080
+[2026-05-17 18:17:56] New client connected (fd=5)
+[2026-05-17 18:17:56] Thread processing client fd=5
+[2026-05-17 18:17:56] WebSocket client detected on fd=5
+[2026-05-17 18:17:56] WebSocket handshake: key=OXpF3g3fWXRMMb7BRQh1aA==
+[2026-05-17 18:17:56] WebSocket handshake successful, accept=thKFroZa7tjY3Hbmy2VKFmA82hY=
+[2026-05-17 18:17:56] Received from fd=5: LOGIN|уыав|выа
+[2026-05-17 18:17:56] WebSocket close frame received
+[2026-05-17 18:17:56] Client fd=5 disconnected
+[2026-05-17 18:17:56] Client fd=5 disconnected
+[2026-05-17 18:18:06] New client connected (fd=6)
+[2026-05-17 18:18:06] Thread processing client fd=6
+[2026-05-17 18:18:06] WebSocket client detected on fd=6
+[2026-05-17 18:18:06] WebSocket handshake: key=tmssLWhazuHigEf6sFvgKQ==
+[2026-05-17 18:18:06] WebSocket handshake successful, accept=jcZs9rl/fF5vRyGsG7jDpc/APwg=
+[2026-05-17 18:18:06] Received from fd=6: LOGIN|alice|mypass
+[2026-05-17 18:18:06] WebSocket close frame received
+[2026-05-17 18:18:06] Client fd=6 disconnected
+[2026-05-17 18:18:06] Client fd=6 disconnected
+[2026-05-17 18:18:07] New client connected (fd=5)
+[2026-05-17 18:18:07] Thread processing client fd=5
+[2026-05-17 18:18:07] WebSocket client detected on fd=5
+[2026-05-17 18:18:07] WebSocket handshake: key=YzihX7JoNk9zNQrz6ARBag==
+[2026-05-17 18:18:07] WebSocket handshake successful, accept=zzqq4dWfhMHOvonHVfwUJNB/NjI=
+[2026-05-17 18:18:07] Received from fd=5: LOGIN|alice|mypass
+[2026-05-17 18:18:07] WebSocket close frame received
+[2026-05-17 18:18:07] Client fd=5 disconnected
+[2026-05-17 18:18:07] Client fd=5 disconnected
+[2026-05-17 18:18:14] New client connected (fd=6)
+[2026-05-17 18:18:14] Thread processing client fd=6
+[2026-05-17 18:18:14] WebSocket client detected on fd=6
+[2026-05-17 18:18:14] WebSocket handshake: key=k1u79rEYMKyL4VQ85x7c0g==
+[2026-05-17 18:18:14] WebSocket handshake successful, accept=/DQlFgpghtvfwGlHN/6F5afrLbc=
+[2026-05-17 18:18:14] Received from fd=6: LOGIN|alice|mypassword
+[2026-05-17 18:18:14] User authenticated: alice (id=1)
+[2026-05-17 18:18:14] User alice (id=1) added to online table (fd=6, total=1)
+[2026-05-17 18:18:14] User logged in: alice (id=1)
+[2026-05-17 18:18:14] WebSocket close frame received
+[2026-05-17 18:18:14] User alice (id=1) removed from online table (fd=6)
+[2026-05-17 18:18:14] Client fd=6 disconnected
+[2026-05-17 18:18:14] Client fd=6 disconnected
+[2026-05-17 18:18:29] New client connected (fd=5)
+[2026-05-17 18:18:29] Thread processing client fd=5
+[2026-05-17 18:18:29] WebSocket client detected on fd=5
+[2026-05-17 18:18:29] WebSocket handshake: key=d7fuwzOz1Hj8AZ6oWUrLgA==
+[2026-05-17 18:18:29] WebSocket handshake successful, accept=KHRXT1m2NoQ9IUuqJr6XfEcGwrE=
+[2026-05-17 18:18:29] Received from fd=5: REGISTER|alice|3245
+[2026-05-17 18:18:29] WebSocket close frame received
+[2026-05-17 18:18:29] Client fd=5 disconnected
+[2026-05-17 18:18:29] Client fd=5 disconnected
+[2026-05-17 18:19:50] New client connected (fd=6)
+[2026-05-17 18:19:50] Thread processing client fd=6
+[2026-05-17 18:19:50] WebSocket client detected on fd=6
+[2026-05-17 18:19:50] WebSocket handshake: key=cFF3cs9RCxmmDQniysJ1vg==
+[2026-05-17 18:19:50] WebSocket handshake successful, accept=35OiewWP5FTIAnP5Rf3NeemMiBA=
+[2026-05-17 18:19:50] Received from fd=6: REGISTER|ivan|password
+[2026-05-17 18:19:50] User registered: ivan
+[2026-05-17 18:19:50] User registered: ivan
+[2026-05-17 18:19:55] WebSocket close frame received
+[2026-05-17 18:19:55] Client fd=6 disconnected
+[2026-05-17 18:19:55] Client fd=6 disconnected
+[2026-05-17 18:19:57] New client connected (fd=5)
+[2026-05-17 18:19:57] Thread processing client fd=5
+[2026-05-17 18:19:57] WebSocket client detected on fd=5
+[2026-05-17 18:19:57] WebSocket handshake: key=3brKodePloWqcIwJR6OCfQ==
+[2026-05-17 18:19:57] WebSocket handshake successful, accept=fbEiBmbP5VBZVp/vHP1GVQHQ13Q=
+[2026-05-17 18:19:57] Received from fd=5: REGISTER|ivan|password
+[2026-05-17 18:19:57] WebSocket close frame received
+[2026-05-17 18:19:57] Client fd=5 disconnected
+[2026-05-17 18:19:57] Client fd=5 disconnected
+[2026-05-17 18:20:02] Server shutdown initiated (SIGINT)
+[2026-05-17 18:20:02] Thread pool shut down
+[2026-05-17 18:20:02] Disconnected from database
+[2026-05-17 18:20:02] Server stopped
+[2026-05-17 18:20:34] Online users table initialized
+[2026-05-17 18:20:34] Thread pool initialized with 10 threads
+[2026-05-17 18:20:34] Connected to database messenger_db
+[2026-05-17 18:20:34] Server started on port 8080
+[2026-05-17 18:20:49] New client connected (fd=5)
+[2026-05-17 18:20:49] Thread processing client fd=5
+[2026-05-17 18:20:49] WebSocket client detected on fd=5
+[2026-05-17 18:20:49] WebSocket handshake: key=ZNWld7BuTryDZKMcztsmfQ==
+[2026-05-17 18:20:49] WebSocket handshake successful, accept=iK0C4YEfN3gk7ctHo3/O20LdQ1I=
+[2026-05-17 18:20:49] Received from fd=5: REGISTER|ivan|12345
+[2026-05-17 18:20:49] WebSocket close frame received
+[2026-05-17 18:20:49] Client fd=5 disconnected
+[2026-05-17 18:20:49] Client fd=5 disconnected
+[2026-05-17 18:20:56] New client connected (fd=6)
+[2026-05-17 18:20:56] Thread processing client fd=6
+[2026-05-17 18:20:56] WebSocket client detected on fd=6
+[2026-05-17 18:20:56] WebSocket handshake: key=Y8RhUPcqfIOjh7RfDV7p0w==
+[2026-05-17 18:20:56] WebSocket handshake successful, accept=RcDJm79XxIhfADniPMdA5L2mstc=
+[2026-05-17 18:20:56] Received from fd=6: REGISTER|ivan1|12345
+[2026-05-17 18:20:56] User registered: ivan1
+[2026-05-17 18:20:56] User registered: ivan1
+[2026-05-17 18:21:01] WebSocket close frame received
+[2026-05-17 18:21:01] Client fd=6 disconnected
+[2026-05-17 18:21:01] Client fd=6 disconnected
+[2026-05-17 18:23:55] New client connected (fd=5)
+[2026-05-17 18:23:56] Thread processing client fd=5
+[2026-05-17 18:23:56] WebSocket client detected on fd=5
+[2026-05-17 18:23:56] WebSocket handshake: key=sKCrnODNll6tKDT91qSxCg==
+[2026-05-17 18:23:56] WebSocket handshake successful, accept=P47EpvJB0EP5gjLwPNBVGl070uk=
+[2026-05-17 18:23:56] Received from fd=5: LOGIN|ivan|password
+[2026-05-17 18:23:56] User authenticated: ivan (id=3)
+[2026-05-17 18:23:56] User ivan (id=3) added to online table (fd=5, total=1)
+[2026-05-17 18:23:56] User logged in: ivan (id=3)
+[2026-05-17 18:23:56] WebSocket close frame received
+[2026-05-17 18:23:56] User ivan (id=3) removed from online table (fd=5)
+[2026-05-17 18:23:56] Client fd=5 disconnected
+[2026-05-17 18:23:56] Client fd=5 disconnected
+[2026-05-17 18:24:37] New client connected (fd=6)
+[2026-05-17 18:24:37] Thread processing client fd=6
+[2026-05-17 18:24:37] WebSocket client detected on fd=6
+[2026-05-17 18:24:37] WebSocket handshake: key=xoX2oHPFidTNiyc66Ku2qw==
+[2026-05-17 18:24:37] WebSocket handshake successful, accept=tFMNVjt/+2Lw4kR9FnR1xbShLis=
+[2026-05-17 18:24:37] Received from fd=6: REGISTER|ivan3|12345
+[2026-05-17 18:24:37] User registered: ivan3
+[2026-05-17 18:24:37] User registered: ivan3
+[2026-05-17 18:26:52] Server shutdown initiated (SIGINT)
+[2026-05-17 18:26:59] WebSocket close frame received
+[2026-05-17 18:26:59] Client fd=6 disconnected
+[2026-05-17 18:26:59] Client fd=6 disconnected
+[2026-05-17 18:26:59] Thread pool shut down
+[2026-05-17 18:26:59] Disconnected from database
+[2026-05-17 18:26:59] Server stopped
+[2026-05-17 18:27:14] Online users table initialized
+[2026-05-17 18:27:14] Thread pool initialized with 10 threads
+[2026-05-17 18:27:14] Connected to database messenger_db
+[2026-05-17 18:27:14] Server started on port 8080
+[2026-05-17 18:28:04] New client connected (fd=5)
+[2026-05-17 18:28:04] Thread processing client fd=5
+[2026-05-17 18:28:04] WebSocket client detected on fd=5
+[2026-05-17 18:28:04] WebSocket handshake: key=Y81tp/iUKnz9Yv1hixZqgQ==
+[2026-05-17 18:28:04] WebSocket handshake successful, accept=vbRnKsex5B5IzMS+tGvTA9R53hY=
+[2026-05-17 18:28:04] Received from fd=5: REGISTER|ivan4|12345
+[2026-05-17 18:28:04] User registered: ivan4
+[2026-05-17 18:28:04] User registered: ivan4
+[2026-05-17 18:28:04] WebSocket close frame received
+[2026-05-17 18:28:04] Client fd=5 disconnected
+[2026-05-17 18:28:04] Client fd=5 disconnected
+[2026-05-17 18:28:07] New client connected (fd=6)
+[2026-05-17 18:28:07] Thread processing client fd=6
+[2026-05-17 18:28:07] WebSocket client detected on fd=6
+[2026-05-17 18:28:07] WebSocket handshake: key=docPgd93DVczRfsuLAE8ng==
+[2026-05-17 18:28:07] WebSocket handshake successful, accept=mnsIkKInCgS6RLtczFKo9H+2R6o=
+[2026-05-17 18:28:07] Received from fd=6: LOGIN|ivan4|12345
+[2026-05-17 18:28:07] User authenticated: ivan4 (id=6)
+[2026-05-17 18:28:07] User ivan4 (id=6) added to online table (fd=6, total=1)
+[2026-05-17 18:28:07] User logged in: ivan4 (id=6)
+[2026-05-17 18:28:07] WebSocket close frame received
+[2026-05-17 18:28:07] User ivan4 (id=6) removed from online table (fd=6)
+[2026-05-17 18:28:07] Client fd=6 disconnected
+[2026-05-17 18:28:07] Client fd=6 disconnected
+[2026-05-17 18:29:44] New client connected (fd=5)
+[2026-05-17 18:29:44] Thread processing client fd=5
+[2026-05-17 18:29:44] WebSocket client detected on fd=5
+[2026-05-17 18:29:44] WebSocket handshake: key=7grMm2ynKi1h/oFppkxzfA==
+[2026-05-17 18:29:44] WebSocket handshake successful, accept=ATTDJHSmUb5vUKWX9CVh9VylPbs=
+[2026-05-17 18:29:44] Received from fd=5: REGISTER|даниил|даниил
+[2026-05-17 18:29:44] User registered: даниил
+[2026-05-17 18:29:44] User registered: даниил
+[2026-05-17 18:29:44] WebSocket close frame received
+[2026-05-17 18:29:44] Client fd=5 disconnected
+[2026-05-17 18:29:44] Client fd=5 disconnected
+[2026-05-17 18:29:45] New client connected (fd=6)
+[2026-05-17 18:29:45] Thread processing client fd=6
+[2026-05-17 18:29:45] WebSocket client detected on fd=6
+[2026-05-17 18:29:45] WebSocket handshake: key=0mOutFl6jBpdkz15Aq1Z7Q==
+[2026-05-17 18:29:45] WebSocket handshake successful, accept=5Mq88Nx1MOq4PWlclNEOpffwm3E=
+[2026-05-17 18:29:45] Received from fd=6: LOGIN|даниил|даниил
+[2026-05-17 18:29:45] User authenticated: даниил (id=7)
+[2026-05-17 18:29:45] User даниил (id=7) added to online table (fd=6, total=1)
+[2026-05-17 18:29:45] User logged in: даниил (id=7)
+[2026-05-17 18:29:46] WebSocket close frame received
+[2026-05-17 18:29:46] User даниил (id=7) removed from online table (fd=6)
+[2026-05-17 18:29:46] Client fd=6 disconnected
+[2026-05-17 18:29:46] Client fd=6 disconnected
+[2026-05-17 20:31:34] Server shutdown initiated (SIGINT)
+[2026-05-17 20:31:34] Thread pool shut down
+[2026-05-17 20:31:34] Disconnected from database
+[2026-05-17 20:31:34] Server stopped
