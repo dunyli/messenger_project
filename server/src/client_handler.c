@@ -258,35 +258,93 @@ static void handle_logout(int client_fd) {
 
 /*
  * handle_client — главный обработчик одного клиента
- * Принимает сообщение, парсит, вызывает нужную команду
+ *
+ * Определяет тип подключения:
+ *   - Если запрос начинается с "GET /" — это WebSocket (браузер)
+ *   - Иначе — обычный TCP-клиент (C-клиент или telnet)
+ *
+ * WebSocket: использует ws_recv/ws_send для обмена
+ * TCP: использует recv/send напрямую
  */
 void handle_client(int client_fd) {
     char buffer[BUFFER_SIZE];
-    ssize_t bytes_read;
+    int is_websocket = 0;
 
-    // Отправляем приветствие
-    send_response(client_fd, "OK", "Welcome to Messenger v1.0");
+    // Пробуем прочитать первые данные от клиента
+    ssize_t peek_bytes = recv(client_fd, buffer, sizeof(buffer) - 1, MSG_PEEK);
+    if (peek_bytes <= 0) {
+        close(client_fd);
+        return;
+    }
+    buffer[peek_bytes] = '\0';
 
-    // Цикл обработки команд (пока клиент не отключится)
-    while ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) > 0) {
-        buffer[bytes_read] = '\0';
+    // Определяем тип клиента
+    if (strncmp(buffer, "GET /", 5) == 0) {
+        // Это WebSocket-запрос от браузера
+        log_event("WebSocket client detected on fd=%d", client_fd);
+        if (!ws_handshake(client_fd)) {
+            log_event("WebSocket handshake failed on fd=%d", client_fd);
+            close(client_fd);
+            return;
+        }
+        is_websocket = 1;
 
-        // Убираем перевод строки
-        size_t len = strlen(buffer);
-        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
-            buffer[--len] = '\0';
+        // Отправляем приветствие через WebSocket
+        const char *welcome = "OK|Welcome to Messenger v1.0";
+        ws_send(client_fd, welcome, strlen(welcome));
+    } else {
+        // Обычный TCP-клиент
+        log_event("TCP client detected on fd=%d", client_fd);
+        send_response(client_fd, "OK", "Welcome to Messenger v1.0");
+    }
+
+    // Главный цикл обработки команд
+    while (1) {
+        ssize_t bytes_read;
+
+        if (is_websocket) {
+            bytes_read = ws_recv(client_fd, buffer, sizeof(buffer) - 1);
+        } else {
+            bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
         }
 
-        if (len == 0) continue;  // пустая строка — пропускаем
+        if (bytes_read <= 0) break;
+
+        buffer[bytes_read] = '\0';
+
+        // Убираем перевод строки (для TCP-клиентов)
+        if (!is_websocket) {
+            size_t len = strlen(buffer);
+            while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+                buffer[--len] = '\0';
+            }
+            if (len == 0) continue;
+        }
 
         log_event("Received from fd=%d: %s", client_fd, buffer);
 
         // Парсим сообщение
         parsed_message_t parsed;
         if (!protocol_parse(buffer, &parsed)) {
-            send_response(client_fd, "ERROR", "Unknown command or bad format");
+            if (is_websocket) {
+                ws_send(client_fd, "ERROR|Unknown command", 21);
+            } else {
+                send_response(client_fd, "ERROR", "Unknown command or bad format");
+            }
             continue;
         }
+
+        // Временно переопределяем send_response для WebSocket
+        #define SEND_OR_WS(status, body) \
+            do { \
+                if (is_websocket) { \
+                    char tmp[BUFFER_SIZE]; \
+                    protocol_build_response(status, body, tmp, sizeof(tmp)); \
+                    ws_send(client_fd, tmp, strlen(tmp)); \
+                } else { \
+                    send_response(client_fd, status, body); \
+                } \
+            } while(0)
 
         // Выполняем команду
         switch (parsed.type) {
@@ -306,13 +364,13 @@ void handle_client(int client_fd) {
                 handle_logout(client_fd);
                 break;
             default:
-                send_response(client_fd, "ERROR", "Unknown command");
+                SEND_OR_WS("ERROR", "Unknown command");
                 break;
         }
     }
 
-    // Клиент отключился
-    log_event("Client fd=%d disconnected", client_fd);
     // Удаляем пользователя из таблицы онлайн
     online_users_remove(&online_table, client_fd);
+
+    log_event("Client fd=%d disconnected", client_fd);
 }
