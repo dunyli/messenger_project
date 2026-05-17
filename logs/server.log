@@ -244,3 +244,8 @@ DETAIL:  Key (chat_id)=(1) is not present in table "chats".
 [2026-05-17 13:13:58] Received from fd=5: O
 [2026-05-17 13:19:33] Client fd=5 disconnected
 [2026-05-17 13:19:33] Client fd=5 disconnected
+[2026-05-17 14:40:36] Server shutdown initiated (SIGINT)
+[2026-05-17 14:40:36] Server shutdown initiated (SIGINT)
+[2026-05-17 14:40:36] Thread pool shut down
+[2026-05-17 14:40:37] Disconnected from database
+[2026-05-17 14:40:37] Server stopped
