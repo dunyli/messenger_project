@@ -1,20 +1,19 @@
 /*
- * Login.js — экран входа/регистрации
- * Содержит поле для ввода IP-адреса сервера
- * По умолчанию: messenger-server.local (mDNS)
+ * Login.js — красивый экран входа/регистрации
  */
 import React, { useState } from 'react';
-import { connect, send } from './api';
+import { connect, send, getWs } from './api';
 import './Login.css';
 
 function Login({ onLogin }) {
-    const [serverUrl, setServerUrl] = useState('messenger-server.local');
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [isRegister, setIsRegister] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // Обработка ответа от сервера
-    const handleResponse = (data) => {
+        const handleResponse = (data) => {
+        setLoading(false);
         if (data.startsWith('OK|Welcome')) {
             onLogin(login);
         } else if (data.startsWith('ERROR|')) {
@@ -22,63 +21,89 @@ function Login({ onLogin }) {
         }
     };
 
-    // Вход
-    const handleLogin = () => {
-        if (!serverUrl) {
-            setMessage('Введите адрес сервера');
+    const handleSubmit = () => {
+        if (!login.trim() || !password.trim()) {
+            setMessage('Заполните все поля');
             return;
         }
-        if (!login || !password) {
-            setMessage('Введите логин и пароль');
+        if (password.length < 3) {
+            setMessage('Пароль минимум 3 символа');
             return;
         }
-        connect(serverUrl, handleResponse);
-        // Даём время на подключение, затем отправляем
-        setTimeout(() => send('LOGIN', login, password), 500);
+
+        setLoading(true);
+        setMessage('');
+        connect(handleResponse);
+
+        const command = isRegister ? 'REGISTER' : 'LOGIN';
+        // Даём WebSocket время на подключение перед отправкой
+        const trySend = () => {
+            const ws = getWs();
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                send(command, login, password);
+            } else {
+                setTimeout(trySend, 100);
+            }
+        };
+        setTimeout(trySend, 300);
     };
 
-    // Регистрация
-    const handleRegister = () => {
-        if (!serverUrl) {
-            setMessage('Введите адрес сервера');
-            return;
-        }
-        if (!login || !password) {
-            setMessage('Введите логин и пароль');
-            return;
-        }
-        connect(serverUrl, handleResponse);
-        setTimeout(() => send('REGISTER', login, password), 500);
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') handleSubmit();
     };
 
     return (
-        <div className="login-container">
-            <h1>Messenger</h1>
+        <div className="login-page">
+            <div className="login-card">
+                <div className="login-icon">💬</div>
+                <h1>Messenger</h1>
+                <p className="login-subtitle">
+                    {isRegister ? 'Создать аккаунт' : 'Войти в аккаунт'}
+                </p>
 
-            <input
-                type="text"
-                placeholder="Адрес сервера (IP или имя)"
-                value={serverUrl}
-                onChange={(e) => setServerUrl(e.target.value)}
-            />
+                <div className="login-field">
+                    <span className="login-field-icon">👤</span>
+                    <input
+                        type="text"
+                        placeholder="Логин"
+                        value={login}
+                        onChange={(e) => setLogin(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                </div>
 
-            <input
-                type="text"
-                placeholder="Логин"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <div className="login-buttons">
-                <button onClick={handleLogin}>Войти</button>
-                <button onClick={handleRegister}>Регистрация</button>
+                <div className="login-field">
+                    <span className="login-field-icon">🔒</span>
+                    <input
+                        type="password"
+                        placeholder="Пароль"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                </div>
+
+                <button
+                    className="login-button"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                >
+                    {loading ? 'Подключение...' : isRegister ? 'Зарегистрироваться' : 'Войти'}
+                </button>
+
+                {message && (
+                    <p className={`login-message ${message.includes('успешно') ? 'success' : 'error'}`}>
+                        {message}
+                    </p>
+                )}
+
+                <p className="login-switch" onClick={() => {
+                    setIsRegister(!isRegister);
+                    setMessage('');
+                }}>
+                    {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
+                </p>
             </div>
-            {message && <p className="login-message">{message}</p>}
         </div>
     );
 }

@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    text-align: center;
+}
+
+.login-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.login-card h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.login-subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.login-field {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.login-field-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+}
+
+.login-field input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    outline: none;
+}
+
+.login-field input:focus {
+    border-color: #667eea;
+}
+
+.login-button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.login-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    opacity: 0.95;
+}
+
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.login-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.login-message.error {
+    background: #ffe0e0;
+    color: #c0392b;
+}
+
+.login-message.success {
+    background: #e0ffe0;
+    color: #27ae60;
+}
+
+.login-switch {
+    margin-top: 20px;
+    color: #667eea;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.login-switch:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}

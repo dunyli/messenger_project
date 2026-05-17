@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+/*
+ * App.js — главный компонент приложения
+ * Переключает экраны: Login / Chat
+ */
+import React, { useState, useCallback } from 'react';
+import { connect } from './api';
+import Login from './Login';
+import Chat from './Chat';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [login, setLogin] = useState('');
+    const [serverUrl, setServerUrl] = useState('');
+
+    // Обработка входящих сообщений
+    const handleMessage = useCallback((data) => {
+        console.log('Incoming:', data);
+    }, []);
+
+    // Подключаемся при входе
+    const handleLogin = (userLogin) => {
+        setLogin(userLogin);
+        setLoggedIn(true);
+    };
+
+    if (!loggedIn) {
+        return <Login onLogin={handleLogin} />;
+    }
+
+    return <Chat login={login} />;
 }
 
 export default App;
