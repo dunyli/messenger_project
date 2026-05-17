@@ -1,15 +1,15 @@
 /*
  * client_handler.c — обработка одного клиента
  *
- * На данном этапе — заглушка:
- *   - Читает сообщение от клиента (до 4096 байт)
- *   - Выводит в консоль сервера
- *   - Отправляет ответ "Server received: ..."
+ * Поддерживаемые команды:
+ *   REGISTER|login|password     — регистрация
+ *   LOGIN|login|password        — вход
+ *   MSG|recipient|text          — личное сообщение
+ *   HISTORY|recipient|limit     — история переписки
+ *   LOGOUT                      — выход
  *
- * В будущем здесь будет:
- *   - Парсинг протокола (LOGIN, MSG, GROUP_MSG, LOGOUT)
- *   - Аутентификация через БД
- *   - Маршрутизация сообщений другим клиентам
+ * Для работы с БД используется глобальное соединение db_conn,
+ * определённое в main.c.
  */
 
 #include <stdio.h>
@@ -20,34 +20,225 @@
 #include "client_handler.h"
 #include "config.h"
 #include "logger.h"
+#include "protocol.h"
+#include "db.h"
+#include "crypto.h"
 
+// Внешнее соединение с БД (создаётся в main.c)
+extern PGconn *db_conn;
+
+// Храним информацию о залогиненном пользователе для этой сессии
+static int current_user_id = -1;
+static char current_user_login[64] = "";
+
+/*
+ * send_response — отправляет ответ клиенту
+ */
+static void send_response(int client_fd, const char *status, const char *body) {
+    char response[BUFFER_SIZE];
+    protocol_build_response(status, body, response, sizeof(response));
+    send(client_fd, response, strlen(response), 0);
+}
+
+/*
+ * handle_register — обработка команды REGISTER
+ * Хеширует пароль через SHA-256 и сохраняет в БД
+ */
+static void handle_register(int client_fd, parsed_message_t *msg) {
+    if (msg->args_count < 2) {
+        send_response(client_fd, "ERROR", "Usage: REGISTER|login|password");
+        return;
+    }
+
+    char *login = msg->args[0];
+    char *password = msg->args[1];
+
+    // Хешируем пароль
+    char password_hash[65];
+    sha256_hash(password, password_hash);
+
+    // Пытаемся зарегистрировать
+    int result = db_register_user(db_conn, login, password_hash);
+
+    if (result == 1) {
+        log_event("User registered: %s", login);
+        send_response(client_fd, "OK", "Registration successful");
+    } else if (result == 0) {
+        send_response(client_fd, "ERROR", "Login already exists");
+    } else {
+        send_response(client_fd, "ERROR", "Database error");
+    }
+}
+
+/*
+ * handle_login — обработка команды LOGIN
+ * Проверяет логин и пароль, при успехе запоминает пользователя
+ */
+static void handle_login(int client_fd, parsed_message_t *msg) {
+    if (msg->args_count < 2) {
+        send_response(client_fd, "ERROR", "Usage: LOGIN|login|password");
+        return;
+    }
+
+    char *login = msg->args[0];
+    char *password = msg->args[1];
+
+    // Хешируем пароль
+    char password_hash[65];
+    sha256_hash(password, password_hash);
+
+    // Проверяем аутентификацию
+    int user_id = db_authenticate_user(db_conn, login, password_hash);
+
+    if (user_id >= 0) {
+        current_user_id = user_id;
+        strncpy(current_user_login, login, sizeof(current_user_login) - 1);
+
+        // Логируем вход
+        db_log_session(db_conn, user_id, "login", "127.0.0.1");
+
+        log_event("User logged in: %s (id=%d)", login, user_id);
+
+        char response_body[256];
+        snprintf(response_body, sizeof(response_body), "Welcome, %s! Your ID: %d", login, user_id);
+        send_response(client_fd, "OK", response_body);
+    } else {
+        send_response(client_fd, "ERROR", "Invalid login or password");
+    }
+}
+
+/*
+ * handle_msg — обработка команды MSG
+ * Сохраняет сообщение в БД и возвращает подтверждение
+ * (маршрутизация адресату будет добавлена позже)
+ */
+static void handle_msg(int client_fd, parsed_message_t *msg) {
+    if (current_user_id < 0) {
+        send_response(client_fd, "ERROR", "Not logged in");
+        return;
+    }
+
+    if (msg->args_count < 2) {
+        send_response(client_fd, "ERROR", "Usage: MSG|recipient|text");
+        return;
+    }
+
+    char *recipient_login = msg->args[0];
+    char *text = msg->args[1];
+
+    // Проверяем, существует ли получатель (упрощённо — ищем по логину)
+    // TODO: создать чат между пользователями, если его ещё нет
+    // Пока сохраняем с chat_id = 0 (заглушка)
+
+    int message_id = db_save_message(db_conn, current_user_id, 1, text);
+
+    if (message_id >= 0) {
+        log_event("Message from %s to %s: %s", current_user_login, recipient_login, text);
+
+        char response_body[256];
+        snprintf(response_body, sizeof(response_body),
+                 "Message sent to %s (msg_id=%d)", recipient_login, message_id);
+        send_response(client_fd, "OK", response_body);
+    } else {
+        send_response(client_fd, "ERROR", "Failed to save message");
+    }
+}
+
+/*
+ * handle_history — обработка команды HISTORY
+ * Загружает последние N сообщений (пока только из консоли сервера)
+ */
+static void handle_history(int client_fd, parsed_message_t *msg) {
+    if (current_user_id < 0) {
+        send_response(client_fd, "ERROR", "Not logged in");
+        return;
+    }
+
+    int limit = 10;  // по умолчанию 10 сообщений
+    if (msg->args_count >= 1) {
+        limit = atoi(msg->args[0]);
+        if (limit <= 0) limit = 10;
+        if (limit > 100) limit = 100;  // ограничиваем сверху
+    }
+
+    // Пока загружаем историю в консоль сервера
+    // TODO: возвращать историю клиенту в виде OK|msg1,msg2,...
+    db_get_chat_history(db_conn, 1, limit);
+
+    send_response(client_fd, "OK", "History printed on server console");
+}
+
+/*
+ * handle_logout — обработка команды LOGOUT
+ * Сбрасывает сессию пользователя
+ */
+static void handle_logout(int client_fd) {
+    if (current_user_id > 0) {
+        db_log_session(db_conn, current_user_id, "logout", "127.0.0.1");
+        log_event("User logged out: %s (id=%d)", current_user_login, current_user_id);
+
+        current_user_id = -1;
+        memset(current_user_login, 0, sizeof(current_user_login));
+    }
+
+    send_response(client_fd, "OK", "Goodbye!");
+}
+
+/*
+ * handle_client — главный обработчик одного клиента
+ * Принимает сообщение, парсит, вызывает нужную команду
+ */
 void handle_client(int client_fd) {
     char buffer[BUFFER_SIZE];
+    ssize_t bytes_read;
 
-    // Читаем данные от клиента
-    ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+    // Отправляем приветствие
+    send_response(client_fd, "OK", "Welcome to Messenger v1.0");
 
-    if (bytes_read > 0) {
-        buffer[bytes_read] = '\0';  // завершаем строку
+    // Цикл обработки команд (пока клиент не отключится)
+    while ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) > 0) {
+        buffer[bytes_read] = '\0';
 
-        // Убираем символ перевода строки (если есть)
+        // Убираем перевод строки
         size_t len = strlen(buffer);
-        if (len > 0 && buffer[len - 1] == '\n') {
-            buffer[len - 1] = '\0';
+        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+            buffer[--len] = '\0';
         }
 
-        printf("Received: %s\n", buffer);
+        if (len == 0) continue;  // пустая строка — пропускаем
+
         log_event("Received from fd=%d: %s", client_fd, buffer);
 
-        // Отправляем ответ клиенту
-        char response[BUFFER_SIZE];
-        snprintf(response, sizeof(response), "Server received: %s\n", buffer);
-        send(client_fd, response, strlen(response), 0);
-    } else if (bytes_read == 0) {
-        // Клиент закрыл соединение
-        log_event("Client fd=%d closed connection", client_fd);
-    } else {
-        // Ошибка чтения
-        log_event("Error reading from client fd=%d", client_fd);
+        // Парсим сообщение
+        parsed_message_t parsed;
+        if (!protocol_parse(buffer, &parsed)) {
+            send_response(client_fd, "ERROR", "Unknown command or bad format");
+            continue;
+        }
+
+        // Выполняем команду
+        switch (parsed.type) {
+            case CMD_REGISTER:
+                handle_register(client_fd, &parsed);
+                break;
+            case CMD_LOGIN:
+                handle_login(client_fd, &parsed);
+                break;
+            case CMD_MSG:
+                handle_msg(client_fd, &parsed);
+                break;
+            case CMD_HISTORY:
+                handle_history(client_fd, &parsed);
+                break;
+            case CMD_LOGOUT:
+                handle_logout(client_fd);
+                break;
+            default:
+                send_response(client_fd, "ERROR", "Unknown command");
+                break;
+        }
     }
+
+    // Клиент отключился
+    log_event("Client fd=%d disconnected", client_fd);
 }

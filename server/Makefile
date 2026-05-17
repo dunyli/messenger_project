@@ -10,7 +10,8 @@ LDFLAGS = -lpq -lpthread -lssl -lcrypto
 TARGET  = server
 
 # Все исходные файлы сервера
-SRC     = src/main.c src/logger.c src/thread_pool.c src/client_handler.c src/db.c src/crypto.c
+SRC = src/main.c src/logger.c src/thread_pool.c src/client_handler.c \
+      src/db.c src/crypto.c src/protocol.c
 
 OBJ     = $(SRC:.c=.o)
 

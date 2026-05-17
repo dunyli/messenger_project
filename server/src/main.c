@@ -29,6 +29,9 @@
 static thread_pool_t *global_pool = NULL;
 static int server_fd_global = 0;
 
+// Глобальное соединение с БД (используется в client_handler.c)
+PGconn *db_conn = NULL;
+
 /*
  * signal_handler — обрабатывает Ctrl+C (SIGINT)
  * Корректно завершает пул потоков и закрывает сокет
@@ -40,6 +43,10 @@ void signal_handler(int sig) {
 
     if (global_pool) {
         thread_pool_shutdown(global_pool);
+    }
+    if (db_conn) {
+        db_log_server_event(db_conn, "server_stop", "Server stopped normally");
+        db_disconnect(db_conn);
     }
     if (server_fd_global > 0) {
         close(server_fd_global);
@@ -95,12 +102,15 @@ int main() {
     thread_pool_init(&pool);
     global_pool = &pool;
 
-    // === Подключаемся к базе данных ===
-    PGconn *db_conn = db_connect();
+     // === Подключаемся к базе данных ===
+    db_conn = db_connect();
     if (db_conn) {
         db_log_server_event(db_conn, "server_start",
                             "Server started on port 8080");
-        // Не закрываем соединение — оно понадобится для обработки клиентов
+        printf("Connected to database %s\n", DB_NAME);
+    } else {
+        printf("WARNING: Running without database connection\n");
+        log_event("WARNING: Server started without database connection");
     }
 
     printf("Server started on port %d\n", SERVER_PORT);
