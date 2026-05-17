@@ -313,6 +313,6 @@ void handle_client(int client_fd) {
 
     // Клиент отключился
     log_event("Client fd=%d disconnected", client_fd);
-    / Удаляем пользователя из таблицы онлайн
+    // Удаляем пользователя из таблицы онлайн
     online_users_remove(&online_table, client_fd);
 }

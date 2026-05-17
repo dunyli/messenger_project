@@ -157,3 +157,90 @@ DETAIL:  Key (chat_id)=(1) is not present in table "chats".
 [2026-05-17 12:23:46] Thread pool shut down
 [2026-05-17 12:23:46] Disconnected from database
 [2026-05-17 12:23:46] Server stopped
+[2026-05-17 12:55:02] Online users table initialized
+[2026-05-17 12:55:02] Thread pool initialized with 10 threads
+[2026-05-17 12:55:02] Connected to database messenger_db
+[2026-05-17 12:55:02] Server started on port 8080
+[2026-05-17 12:55:12] New client connected (fd=5)
+[2026-05-17 12:55:12] Thread processing client fd=5
+[2026-05-17 12:55:25] Received from fd=5: LOGIN|alice|mypassword
+[2026-05-17 12:55:25] User authenticated: alice (id=1)
+[2026-05-17 12:55:25] User alice (id=1) added to online table (fd=5, total=1)
+[2026-05-17 12:55:25] User logged in: alice (id=1)
+[2026-05-17 12:55:43] New client connected (fd=6)
+[2026-05-17 12:55:43] Thread processing client fd=6
+[2026-05-17 12:55:52] Received from fd=6: LOGIN|bob|secret
+[2026-05-17 12:55:52] User authenticated: bob (id=2)
+[2026-05-17 12:55:52] User bob (id=2) added to online table (fd=6, total=2)
+[2026-05-17 12:55:52] User logged in: bob (id=2)
+[2026-05-17 12:56:02] Received from fd=6: MSG|alice|Привет,|Алиса!
+[2026-05-17 12:56:02] Message saved: id=6, sender=2, chat=1
+[2026-05-17 12:56:02] Message from bob to alice: Привет,
+[2026-05-17 12:56:02] Message forwarded to alice (fd=5)
+[2026-05-17 12:56:35] Received from fd=5: MSG|bob|Привет,|как|дела?
+[2026-05-17 12:56:35] Message saved: id=7, sender=2, chat=1
+[2026-05-17 12:56:35] Message from bob to bob: Привет,
+[2026-05-17 12:56:35] Message forwarded to bob (fd=6)
+[2026-05-17 12:57:07] Received from fd=6: MSG|alice|fsdfsdffdghghjghjgh
+[2026-05-17 12:57:07] Message saved: id=8, sender=2, chat=1
+[2026-05-17 12:57:07] Message from bob to alice: fsdfsdffdghghjghjgh
+[2026-05-17 12:57:07] Message forwarded to alice (fd=5)
+[2026-05-17 12:57:25] Received from fd=5: MSG|bob|Привет,Привет
+[2026-05-17 12:57:25] Message saved: id=9, sender=2, chat=1
+[2026-05-17 12:57:25] Message from bob to bob: Привет,Привет
+[2026-05-17 12:57:25] Message forwarded to bob (fd=6)
+[2026-05-17 13:04:43] Client fd=6 disconnected
+[2026-05-17 13:04:43] User bob (id=2) removed from online table (fd=6)
+[2026-05-17 13:04:43] Client fd=6 disconnected
+[2026-05-17 13:05:14] New client connected (fd=7)
+[2026-05-17 13:05:14] Thread processing client fd=7
+[2026-05-17 13:05:25] Received from fd=7: LOGIN|bob|secret
+[2026-05-17 13:05:25] User authenticated: bob (id=2)
+[2026-05-17 13:05:25] User bob (id=2) added to online table (fd=7, total=2)
+[2026-05-17 13:05:25] User logged in: bob (id=2)
+[2026-05-17 13:05:31] Client fd=5 disconnected
+[2026-05-17 13:05:31] User alice (id=1) removed from online table (fd=5)
+[2026-05-17 13:05:31] Client fd=5 disconnected
+[2026-05-17 13:05:47] New client connected (fd=6)
+[2026-05-17 13:05:47] Thread processing client fd=6
+[2026-05-17 13:06:01] Received from fd=6: LOGIN|alice|strongpass123
+[2026-05-17 13:06:25] Received from fd=6: LOGIN|alice|mypassword
+[2026-05-17 13:06:25] User authenticated: alice (id=1)
+[2026-05-17 13:06:25] User alice (id=1) added to online table (fd=6, total=2)
+[2026-05-17 13:06:25] User logged in: alice (id=1)
+[2026-05-17 13:06:43] Received from fd=6: MSG|bob|Привет, как твои дела?
+[2026-05-17 13:06:43] Message saved: id=10, sender=1, chat=1
+[2026-05-17 13:06:43] Message from alice to bob: Привет, как твои дела?
+[2026-05-17 13:06:43] Message forwarded to bob (fd=7)
+[2026-05-17 13:07:10] Received from fd=7: MSG|alice|Здарова все норм, а как твои?
+[2026-05-17 13:07:10] Message saved: id=11, sender=1, chat=1
+[2026-05-17 13:07:10] Message from alice to alice: Здарова все норм, а как твои?
+[2026-05-17 13:07:10] Message forwarded to alice (fd=6)
+[2026-05-17 13:11:22] Client fd=6 disconnected
+[2026-05-17 13:11:22] User alice (id=1) removed from online table (fd=6)
+[2026-05-17 13:11:22] Client fd=6 disconnected
+[2026-05-17 13:11:25] Client fd=7 disconnected
+[2026-05-17 13:11:25] User bob (id=2) removed from online table (fd=7)
+[2026-05-17 13:11:25] Client fd=7 disconnected
+[2026-05-17 13:12:02] New client connected (fd=5)
+[2026-05-17 13:12:02] Thread processing client fd=5
+[2026-05-17 13:13:18] New client connected (fd=6)
+[2026-05-17 13:13:18] Thread processing client fd=6
+[2026-05-17 13:13:29] Received from fd=6: LOGIN|bob|secret
+[2026-05-17 13:13:29] User authenticated: bob (id=2)
+[2026-05-17 13:13:29] User bob (id=2) added to online table (fd=6, total=1)
+[2026-05-17 13:13:29] User logged in: bob (id=2)
+[2026-05-17 13:13:36] Received from fd=5: �
+[2026-05-17 13:13:36] Received from fd=5: �
+[2026-05-17 13:13:40] Received from fd=5: L
+[2026-05-17 13:13:40] Received from fd=5: O
+[2026-05-17 13:13:45] Received from fd=5: L
+[2026-05-17 13:13:48] Received from fd=5: d
+[2026-05-17 13:13:49] Received from fd=5: d
+[2026-05-17 13:13:49] Received from fd=5: f
+[2026-05-17 13:13:50] Received from fd=5: 
+[2026-05-17 13:13:50] Received from fd=5: 
+[2026-05-17 13:13:58] Received from fd=5: L
+[2026-05-17 13:13:58] Received from fd=5: O
+[2026-05-17 13:19:33] Client fd=5 disconnected
+[2026-05-17 13:19:33] Client fd=5 disconnected
