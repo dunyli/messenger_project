@@ -254,6 +254,30 @@ static void handle_logout(int client_fd) {
 }
 
 /*
+ * handle_check_user — проверяет, существует ли пользователь с таким логином
+ */
+static void handle_check_user(int client_fd, parsed_message_t *msg) {
+    if (msg->args_count < 1) {
+        send_to_client(client_fd, "ERROR", "Usage: CHECK_USER|login");
+        return;
+    }
+
+    char *login = msg->args[0];
+    char query[256];
+    char *escaped = PQescapeLiteral(db_conn, login, strlen(login));
+    snprintf(query, sizeof(query), "SELECT id FROM users WHERE login = %s", escaped);
+    PQfreemem(escaped);
+
+    PGresult *res = PQexec(db_conn, query);
+    if (PQresultStatus(res) == PGRES_TUPLES_OK && PQntuples(res) > 0) {
+        send_to_client(client_fd, "OK", "User exists");
+    } else {
+        send_to_client(client_fd, "ERROR", "User not found");
+    }
+    PQclear(res);
+}
+
+/*
  * handle_client — главный обработчик одного клиента
  * Определяет тип (TCP или WebSocket) и запускает цикл обработки команд
  */
@@ -336,6 +360,9 @@ void handle_client(int client_fd) {
                 break;
             case CMD_LOGOUT:
                 handle_logout(client_fd);
+                break;
+            case CMD_CHECK_USER:
+                handle_check_user(client_fd, &parsed);
                 break;
             default:
                 send_to_client(client_fd, "ERROR", "Unknown command");

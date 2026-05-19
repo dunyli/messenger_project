@@ -27,6 +27,7 @@ static command_type_t parse_command(const char *cmd_str) {
     if (strcmp(cmd_str, "MSG") == 0)      return CMD_MSG;
     if (strcmp(cmd_str, "HISTORY") == 0)  return CMD_HISTORY;
     if (strcmp(cmd_str, "LOGOUT") == 0)   return CMD_LOGOUT;
+    if (strcmp(cmd_str, "CHECK_USER") == 0) return CMD_CHECK_USER;
     return CMD_UNKNOWN;
 }
 

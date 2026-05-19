@@ -119,19 +119,38 @@ function Chat({ login, password, onLogout }) {
         }
     };
 
-    // Начать новый чат
+        // Начать новый чат
     const startNewChat = () => {
         if (!newChatUser.trim()) return;
-        const chatKey = `private_${newChatUser}`;
-        if (!chats.find(c => c.key === chatKey)) {
-            const newChat = { key: chatKey, name: newChatUser, type: 'private' };
-            setChats(prev => [...prev, newChat]);
-            setActiveChat(newChat);
-        } else {
-            setActiveChat(chats.find(c => c.key === chatKey));
+
+        const ws = wsRef.current;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            // Проверяем существование пользователя
+            const checkHandler = (event) => {
+                const data = event.data;
+
+                if (data.startsWith('OK|User exists')) {
+                    const chatKey = `private_${newChatUser}`;
+                    if (!chats.find(c => c.key === chatKey)) {
+                        const newChat = { key: chatKey, name: newChatUser, type: 'private' };
+                        setChats(prev => [...prev, newChat]);
+                        setActiveChat(newChat);
+                    } else {
+                        setActiveChat(chats.find(c => c.key === chatKey));
+                    }
+                    setNewChatUser('');
+                    setShowNewChat(false);
+                } else if (data.startsWith('ERROR|User not found')) {
+                    alert('Пользователь не найден');
+                }
+
+                // Убираем временный обработчик
+                ws.removeEventListener('message', checkHandler);
+            };
+
+            ws.addEventListener('message', checkHandler);
+            ws.send(`CHECK_USER|${newChatUser}`);
         }
-        setNewChatUser('');
-        setShowNewChat(false);
     };
 
     const handleKeyDown = (e) => {

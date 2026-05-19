@@ -645,3 +645,56 @@ DETAIL:  Key (chat_id)=(1) is not present in table "chats".
 [2026-05-17 20:31:34] Thread pool shut down
 [2026-05-17 20:31:34] Disconnected from database
 [2026-05-17 20:31:34] Server stopped
+[2026-05-19 11:36:57] Online users table initialized
+[2026-05-19 11:36:57] Thread pool initialized with 10 threads
+[2026-05-19 11:36:57] Connected to database messenger_db
+[2026-05-19 11:36:57] Server started on port 8080
+[2026-05-19 11:37:25] New client connected (fd=5)
+[2026-05-19 11:37:25] Thread processing client fd=5
+[2026-05-19 11:37:25] WebSocket client detected on fd=5
+[2026-05-19 11:37:25] WebSocket handshake: key=dK1FKD37ZQR/7JYk7xRR6A==
+[2026-05-19 11:37:25] WebSocket handshake successful, accept=AByd2YYHemQ9TBlnYApDGcFzEDw=
+[2026-05-19 11:37:25] Received from fd=5: LOGIN|dasd|234
+[2026-05-19 11:37:25] WebSocket close frame received
+[2026-05-19 11:37:25] Client fd=5 disconnected
+[2026-05-19 11:37:25] Client fd=5 disconnected
+[2026-05-19 11:37:37] New client connected (fd=6)
+[2026-05-19 11:37:37] Thread processing client fd=6
+[2026-05-19 11:37:37] WebSocket client detected on fd=6
+[2026-05-19 11:37:37] WebSocket handshake: key=OMBPSecRaDcCkEYWDdaerQ==
+[2026-05-19 11:37:37] WebSocket handshake successful, accept=r4GfDpCpDtAfFsUPHC3VkbvZiHM=
+[2026-05-19 11:37:37] Received from fd=6: LOGIN|alice|mypassword
+[2026-05-19 11:37:37] User authenticated: alice (id=1)
+[2026-05-19 11:37:37] User alice (id=1) added to online table (fd=6, total=1)
+[2026-05-19 11:37:37] User logged in: alice (id=1)
+[2026-05-19 11:37:37] WebSocket close frame received
+[2026-05-19 11:37:37] User alice (id=1) removed from online table (fd=6)
+[2026-05-19 11:37:37] Client fd=6 disconnected
+[2026-05-19 11:37:37] Client fd=6 disconnected
+[2026-05-19 11:37:37] New client connected (fd=7)
+[2026-05-19 11:37:37] Thread processing client fd=7
+[2026-05-19 11:37:37] WebSocket client detected on fd=7
+[2026-05-19 11:37:37] WebSocket handshake: key=3GfsNpvNQ+cbw7z9lTy7pA==
+[2026-05-19 11:37:37] WebSocket handshake successful, accept=Ai3amZsSs3O2V6IDCUTa9ZoH9iM=
+[2026-05-19 11:57:08] Online users table initialized
+[2026-05-19 11:57:08] Thread pool initialized with 10 threads
+[2026-05-19 11:57:08] Connected to database messenger_db
+[2026-05-19 11:57:08] Server started on port 8080
+[2026-05-19 11:57:08] New client connected (fd=5)
+[2026-05-19 11:57:08] Thread processing client fd=5
+[2026-05-19 11:57:08] WebSocket client detected on fd=5
+[2026-05-19 11:57:08] WebSocket handshake: key=+44gTUhjWJUvMz/LUxnedA==
+[2026-05-19 11:57:08] WebSocket handshake successful, accept=RYzpDmsvk/QS6AXUJIC1M1QWTq8=
+[2026-05-19 11:57:09] Received from fd=5: LOGIN|alice|mypassword
+[2026-05-19 11:57:09] User authenticated: alice (id=1)
+[2026-05-19 11:57:09] User alice (id=1) added to online table (fd=5, total=1)
+[2026-05-19 11:57:09] User logged in: alice (id=1)
+[2026-05-19 11:57:14] New client connected (fd=6)
+[2026-05-19 11:57:14] Thread processing client fd=6
+[2026-05-19 11:57:14] WebSocket client detected on fd=6
+[2026-05-19 11:57:14] WebSocket handshake: key=rPcM8GzhesbpAnAVZ2bN5w==
+[2026-05-19 11:57:14] WebSocket handshake successful, accept=IXSaPyf4Q7SIfgnJfpK1rdejADs=
+[2026-05-19 11:57:14] Received from fd=6: LOGIN|alice|mypassword
+[2026-05-19 11:57:14] User authenticated: alice (id=1)
+[2026-05-19 11:57:14] User alice (id=1) added to online table (fd=6, total=2)
+[2026-05-19 11:57:14] User logged in: alice (id=1)
